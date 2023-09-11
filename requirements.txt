@@ -4,6 +4,6 @@ pandas
 yfinance
 datetime
 cufflinks
-plotly.offline
+plotly
 iplot
 
