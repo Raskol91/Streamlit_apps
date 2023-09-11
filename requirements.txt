@@ -1,0 +1,9 @@
+streamlit
+numpy
+pandas
+yfinance
+datetime
+cufflinks
+plotly.offline
+iplot
+
