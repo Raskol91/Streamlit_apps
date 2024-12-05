@@ -8,6 +8,41 @@ import plotly.graph_objects as go
 import json
 import os
 
+# File paths for storing data
+VOTES_FILE = "votes.csv"
+VOTERS_FILE = "voters.txt"
+
+# Function to load votes from CSV
+def load_votes():
+    if os.path.exists(VOTES_FILE):
+        df = pd.read_csv(VOTES_FILE)
+        return df.set_index('option')['votes'].to_dict()
+    return {
+        'Baddieverse.ai': 0,
+        'Snapslay.ai': 0,
+        'Photodrip.ai': 0,
+        'photodripai.com': 0,
+        'Baddiegen.ai': 0,
+        'Slaymode.ai': 0
+    }
+
+# Function to save votes to CSV
+def save_votes(votes):
+    df = pd.DataFrame(list(votes.items()), columns=['option', 'votes'])
+    df.to_csv(VOTES_FILE, index=False)
+
+# Function to load voters
+def load_voters():
+    if os.path.exists(VOTERS_FILE):
+        with open(VOTERS_FILE, 'r') as f:
+            return set(f.read().splitlines())
+    return set()
+
+# Function to save voters
+def save_voters(voters):
+    with open(VOTERS_FILE, 'w') as f:
+        f.write('\n'.join(voters))
+
 # Initialize session state if not already done
 if 'name_submitted' not in st.session_state:
     st.session_state.name_submitted = False
@@ -16,16 +51,9 @@ if 'current_name' not in st.session_state:
 if 'show_results' not in st.session_state:
     st.session_state.show_results = False
 if 'votes' not in st.session_state:
-    st.session_state.votes = {
-        'Baddieverse.ai': 0,
-        'Snapslay.ai': 0,
-        'Photodrip.ai': 0,
-        'photodripai.com': 0,
-        'Baddiegen.ai': 0,
-        'Slaymode.ai': 0
-    }
+    st.session_state.votes = load_votes()
 if 'voters' not in st.session_state:
-    st.session_state.voters = set()
+    st.session_state.voters = load_voters()
 
 st.title('AI Photo Website Name Poll')
 st.write('Help us choose the best name for our AI photo generation platform!')
@@ -37,7 +65,7 @@ name = st.text_input('Enter your name:')
 if name:
     if name in st.session_state.voters:
         st.warning('You have already voted!')
-        st.session_state.show_results = True  # Automatically show results for previous voters
+        st.session_state.show_results = True
     else:
         # Create the voting interface
         vote = st.radio(
@@ -50,8 +78,13 @@ if name:
             # Record the vote
             st.session_state.votes[vote] += 1
             st.session_state.voters.add(name)
+            
+            # Save to files
+            save_votes(st.session_state.votes)
+            save_voters(st.session_state.voters)
+            
             st.success('Thank you for voting!')
-            st.session_state.show_results = True  # Show results after voting
+            st.session_state.show_results = True
 
 # Add a button to toggle results visibility
 if st.button('Show/Hide Results'):
@@ -79,7 +112,7 @@ if st.session_state.show_results:
         yaxis_title='Number of Votes',
         xaxis_tickangle=-45,
         height=500,
-        margin=dict(b=100),  # Add bottom margin for rotated labels
+        margin=dict(b=100),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         showlegend=False
