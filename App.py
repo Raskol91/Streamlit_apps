@@ -24,7 +24,8 @@ def load_votes():
         'Photodrip.ai': 0,
         'photodripai.com': 0,
         'Baddiegen.ai': 0,
-        'Slaymode.ai': 0
+        'Slaymode.ai': 0,
+        'None of these': 0  # Added new option
     }
 
 # Function to save votes to CSV
@@ -70,12 +71,17 @@ if name:
         st.warning('You have already voted!')
         st.session_state.show_results = True
     else:
-        # Create the voting interface
+        # Create the voting interface with new option
         vote = st.radio(
             'Which name do you prefer?',
             ['Baddieverse.ai', 'Snapslay.ai', 'Photodrip.ai', 
-             'photodripai.com', 'Baddiegen.ai', 'Slaymode.ai']
+             'photodripai.com', 'Baddiegen.ai', 'Slaymode.ai',
+             'None of these']  # Added new option
         )
+        
+        # Show text input if "None of these" is selected
+        if vote == 'None of these':
+            suggestion = st.text_input('What name would you suggest instead?')
         
         if st.button('Submit Vote'):
             # Record the vote
@@ -86,7 +92,10 @@ if name:
             save_votes(st.session_state.votes)
             save_voters(st.session_state.voters)
             
-            st.success('Thank you for voting!')
+            success_message = 'Thank you for voting!'
+            if vote == 'None of these' and suggestion:
+                success_message += f' Your suggestion "{suggestion}" has been noted.'
+            st.success(success_message)
             st.session_state.show_results = True
 
 # Add a button to toggle results visibility
@@ -145,7 +154,7 @@ if st.session_state.show_results:
     else:
         st.write('No votes yet!')
 
-# Admin Section moved to bottom
+# Admin Section at bottom
 st.markdown("---")  # Add a divider
 with st.expander("Admin Access"):
     admin_password = st.text_input("Enter admin password:", type="password", key="admin_password")
