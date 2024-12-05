@@ -6,4 +6,4 @@ datetime
 cufflinks
 plotly
 seaborn
-matplotlib.pyplot
+matplotlib
