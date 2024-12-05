@@ -11,6 +11,7 @@ import os
 # File paths for storing data
 VOTES_FILE = "votes.csv"
 VOTERS_FILE = "voters.txt"
+ADMIN_PASSWORD = "Raskol91"  # Change this to your desired password
 
 # Function to load votes from CSV
 def load_votes():
@@ -43,7 +44,7 @@ def save_voters(voters):
     with open(VOTERS_FILE, 'w') as f:
         f.write('\n'.join(voters))
 
-# Initialize session state if not already done
+# Initialize session state
 if 'name_submitted' not in st.session_state:
     st.session_state.name_submitted = False
 if 'current_name' not in st.session_state:
@@ -54,8 +55,45 @@ if 'votes' not in st.session_state:
     st.session_state.votes = load_votes()
 if 'voters' not in st.session_state:
     st.session_state.voters = load_voters()
+if 'show_admin' not in st.session_state:
+    st.session_state.show_admin = False
 
 st.title('AI Photo Website Name Poll')
+
+# Admin Section
+with st.expander("Admin Access"):
+    admin_password = st.text_input("Enter admin password:", type="password")
+    if st.button("Login as Admin"):
+        if admin_password == ADMIN_PASSWORD:
+            st.session_state.show_admin = True
+            st.success("Admin access granted!")
+        else:
+            st.error("Incorrect password")
+
+# Admin Controls
+if st.session_state.show_admin:
+    st.subheader("Admin Controls")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("Delete All Votes"):
+            st.session_state.votes = {key: 0 for key in st.session_state.votes}
+            st.session_state.voters = set()
+            save_votes(st.session_state.votes)
+            save_voters(st.session_state.voters)
+            st.success("All votes have been deleted!")
+    
+    with col2:
+        # Delete individual voter
+        voter_to_delete = st.selectbox("Select voter to delete:", 
+                                     options=sorted(list(st.session_state.voters)) if st.session_state.voters else ['No voters'])
+        if st.button("Delete Selected Voter"):
+            if voter_to_delete in st.session_state.voters:
+                st.session_state.voters.remove(voter_to_delete)
+                save_voters(st.session_state.voters)
+                st.success(f"Voter '{voter_to_delete}' has been deleted!")
+
 st.write('Help us choose the best name for our AI photo generation platform!')
 
 # Get user's name
