@@ -5,3 +5,5 @@ yfinance
 datetime
 cufflinks
 plotly
+seaborn
+matplotlib.pyplot
