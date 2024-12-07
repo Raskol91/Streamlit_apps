@@ -25,10 +25,10 @@ def load_votes():
         'photodripai.com': 0,
         'Baddiegen.ai': 0,
         'Slaymode.ai': 0,
-        'SnapPersona.ai": 0,
-        'PicPersona.ai": 0,
-        'ProfilePop.ai": 0,
-        'personalabai.com": 0,
+        'SnapPersona.ai': 0,
+        'PicPersona.ai': 0,
+        'ProfilePop.ai': 0,
+        'personalabai.com': 0,
         'None of these': 0  # Added new option
     }
 
