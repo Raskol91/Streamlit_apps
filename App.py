@@ -80,7 +80,8 @@ if name:
             'Which name do you prefer?',
             ['Baddieverse.ai', 'Snapslay.ai', 'Photodrip.ai', 
              'photodripai.com', 'Baddiegen.ai', 'Slaymode.ai',
-             'None of these']  # Added new option
+             'None of these','SnapPersona.ai','PicPersona.ai', 
+             'ProfilePop.ai', 'personalabai.com']  # Added new option
         )
         
         # Show text input if "None of these" is selected
